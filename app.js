@@ -15,3 +15,10 @@ app.use(express.json());
 app.listen(port, () => {
     console.log(`Listening on http://localhost:${port}`);
 })
+
+app.post("/app/login", (req, res) => {
+    if(req.body.username == "phil"){
+        console.log("name is phil");
+        res.status(200).send("nice phil");
+    }
+})
