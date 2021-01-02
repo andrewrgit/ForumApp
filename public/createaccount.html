@@ -18,7 +18,7 @@
     <main>
         <div class="login">
             <br>
-            <h3>Log In</h3>
+            <h3>Create an Account</h3>
             <span>Username</span>
             <br>
             <input type="user" id="user">
@@ -29,7 +29,12 @@
             <input type="pass" id="pass">
             <br>
             <br>
-            <button type="submit" onclick="OnClickTest()">Log In</button>
+            <span>Confirm Password </span>
+            <br>
+            <input type="pass" id="confirmedpass">
+            <br>
+            <br>
+            <button type="submit" onclick="OnClickTest()">Create Account</button>
         </div>
     </main>
     <script>
@@ -37,12 +42,15 @@
             
             username = document.getElementById("user").value
             password = document.getElementById("pass").value
+            confirmedpass = document.getElementById("confirmedpass").value
+
 
             params = {
                 "username": username,
-                "password": password}
+                "password": password,
+                "confirmedpass": confirmedpass}
 
-            fetch("/api/login",{
+            fetch("/api/createaccount",{
                 method: "POST",
                 headers:{
                     "Content-Type": "application/json"
