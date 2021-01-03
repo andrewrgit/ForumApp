@@ -30,6 +30,8 @@ app.post("/api/login", (req, res) => {
         console.log("name is phil");
         res.status(200).send("nice phil");
     }
+    else
+    console.log("Youre not phil")
 })
 
 app.post("/api/createaccount", (req, res) => {
