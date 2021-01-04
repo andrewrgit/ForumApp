@@ -98,7 +98,18 @@ app.post("/api/createaccount", (req, res) => {
 })
 
 app.get("/api/categories", (req, res) => {
-    
+    try{
+        jwt.verify(req.cookies['token'], privateKey);
+    }
+    catch(err){
+        res.status(403).send(new APIResponse(false, "invalid token"));
+        return;
+    }
+
+    getCategories()
+    .then( categories => {
+        res.status(200).send(categories)
+    })
 })
 
 
