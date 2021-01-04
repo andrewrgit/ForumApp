@@ -6,37 +6,26 @@
     </head>
     <body>
         <header>
-            <div>
-                <h1 class="headertext">Forum App</h1>
-                <div class="offset">
-                    <h3>Search Here</h2>
-                    <input type="search" placeholder="Search...">
-                </div>
-            </div>
+            <script>
+                fetch("header.html")
+                .then((data => {
+                    return data.text()
+                }))
+                .then( html => {
+                    document.getElementsByTagName("header")[0].innerHTML = html;
+                })
+            </script>
         </header>
         <main>
             <div>
-                <h2>Forum Catagories</h2>
-                <div class="catagory">
-                    <h1> <a href="login.html"> Catagory Title </a> </h1>
-                    <h5>Bing Bong This is a cool description.</h4>
-                </div>
-                <div class="catagory">
-                    <h1> <a href=""> Catagory Title </a> </h1>
-                    <h5>Bing Bong This is a cool description.</h4>
-                </div>
-                <div class="catagory">
-                    <h1> <a href=""> Catagory Title </a> </h1>
-                    <h5>Bing Bong This is a cool description.</h4>
-                </div>
-                <div class="catagory">
-                    <h1> <a href=""> Catagory Title </a> </h1>
-                    <h5>Bing Bong This is a cool description.</h4>
+                <h2>Forum Categories</h2>
+                <div id="categories">
+
                 </div>
             </div>
         </main>
 
 
-        <script src="" async defer></script>
+        <script src="index.js" async defer></script>
     </body>
 </html>

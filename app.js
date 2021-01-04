@@ -3,6 +3,7 @@ const path = require("path");
 const { Client } = require("pg");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
@@ -25,16 +26,15 @@ const privateKey = process.env.PRIVATE_KEY || "testprivatekey";
 app.use(express.static(path.resolve(__dirname, "public")));
 app.use(express.urlencoded( { extended: true }));
 app.use(express.json());
+app.use(cookieParser());
+
 
 function checkTokens(req, res, next){
-    const authHeader = req.headers['authorization'];
-    console.log(authHeader);
-    const token = authHeader && authHeader.split(' ')[1];
-    console.log(token);
+    console.log(req.cookies)
+    console.log("lol");
     next();
 }
 
-app.use(checkTokens);
 
 app.listen(port, () => {
     console.log(`Listening on http://localhost:${port}`);
@@ -48,11 +48,12 @@ app.post("/api/login", (req, res) => {
         .then(apiResponse => {
             if(apiResponse.success){               
                 const token = jwt.sign({ username }, privateKey, {
-                    expiresIn: 20
+                    expiresIn: 30
                 });
                 console.log("jwt token: " + token);
                 res.cookie("token", token, {
-                    maxAge: 22 * 1000
+                    maxAge: 30 * 1000,
+                    httpOnly: true
                 })
                 res.status(200).send("logged in successfully, assigning jwt");
             }
@@ -96,6 +97,9 @@ app.post("/api/createaccount", (req, res) => {
     }
 })
 
+app.get("/api/categories", (req, res) => {
+    
+})
 
 
 async function loginAccount(username, password){
@@ -191,3 +195,30 @@ async function doesUsernameExist(username){
     return exists;
 }
 
+async function getCategories(){
+    let client = new Client({
+        connectionString: connString,
+        ssl: false
+    });
+
+    let queryString = "SELECT name FROM categories;";
+    try{
+        await client.connect();
+        let result = await client.query(queryString);
+
+        let categories = [];
+        result.rows.forEach( cat => {
+            categories.push({
+                name: cat["name"]
+            })
+        })
+
+        client.end();
+        return categories;
+    }
+    catch(err){
+        console.log(err);
+        throw err;
+    }
+
+}

@@ -7,13 +7,15 @@
 </head>
 <body>
     <header>
-        <div>
-            <h1 class="headertext">Forum App</h1>
-            <div class="offset">
-                <h3>Search Here</h2>
-                <input type="search" placeholder="Search...">
-            </div>
-        </div>
+        <script>
+            fetch("header.html")
+            .then((data => {
+                return data.text()
+            }))
+            .then( html => {
+                document.getElementsByTagName("header")[0].innerHTML = html;
+            })
+        </script>
     </header>
     <main>
         <div class="login">
