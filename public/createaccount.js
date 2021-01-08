@@ -1,8 +1,11 @@
 var isCreatingAccount = false;
+var createAccountBtn = document.getElementById("createAccountBtn");
 var text = document.getElementById("responseText");
-function OnClickTest(){
+function createAccount(){
     if(isCreatingAccount) return;
     isCreatingAccount = true;
+    createAccountBtn.classList.add("is-loading");
+    
     username = document.getElementById("user").value
     password = document.getElementById("pass").value
     confirmedpass = document.getElementById("confirmedpass").value
@@ -26,6 +29,8 @@ function OnClickTest(){
     })
     .then(json => {
         console.log(json);
+        isCreatingAccount = false;
+        createAccountBtn.classList.remove("is-loading");
         if(json.success){
             text.innerText = "Account created successfully";
             text.classList.remove("has-text-danger");
@@ -36,7 +41,7 @@ function OnClickTest(){
             text.classList.remove("has-text-success");
             text.classList.add("has-text-danger");
         }
-        isCreatingAccount = false;
+        
     })
 
 }

@@ -1,6 +1,9 @@
-function OnClickTest(){
-
-    var isLoggingIn = false;
+var loginBtn = document.getElementById("loginBtn");
+var isLoggingIn = false;
+function login(){
+    if(isLoggingIn) return;
+    isLoggingIn = true;
+    loginBtn.classList.add("is-loading");
     username = document.getElementById("user").value
     password = document.getElementById("pass").value
 
@@ -20,6 +23,8 @@ function OnClickTest(){
         return response.json();
     })
     .then(json => {
+        isLoggingIn = false;
+        loginBtn.classList.remove("is-loading");
         console.log(json);
         if(json.success){
             document.location.href = "/";
