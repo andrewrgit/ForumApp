@@ -21,6 +21,11 @@ const port = process.env.PORT || 3000;
 const connString = process.env.DATABASE_URL || "postgres://postgres:password@localhost:5432/forumDb";
 const privateKey = process.env.PRIVATE_KEY || "testprivatekey";
 
+app.set("views", path.resolve(__dirname, "public"));
+console.log(path.resolve(__dirname, "public/views"));
+app.set("view engine", "ejs");
+
+
 
 
 app.use(express.static(path.resolve(__dirname, "public")));
@@ -40,6 +45,9 @@ app.listen(port, () => {
     console.log(`Listening on http://localhost:${port}`);
 })
 
+
+
+
 app.post("/api/login", (req, res) => {
 
     const {username, password} = req.body;
@@ -55,7 +63,10 @@ app.post("/api/login", (req, res) => {
                     maxAge: 30 * 1000,
                     httpOnly: true
                 })
-                res.status(200).send("logged in successfully, assigning jwt");
+                .send({
+                    success: apiResponse.success,
+                    username: username
+                })
             }
             else{
                 res.status(401).send(apiResponse.message);
@@ -77,12 +88,10 @@ app.post("/api/createaccount", (req, res) => {
         .then(apiResponse => {
             if(apiResponse.success){
                 console.log("sending OK status");
-                res.sendStatus(200);
+                res.status(200).send(apiResponse);
             }
             else{
-                res.status(400).send({
-                    message: apiResponse.message
-                })
+                res.status(400).send(apiResponse)
             }
         })
         .catch(err => {
@@ -93,7 +102,7 @@ app.post("/api/createaccount", (req, res) => {
         })
     }
     else{
-        res.status(400).send("Username and password required when creating account");
+        res.status(400).send(new APIResponse(false, "Username and password required to create account"));
     }
 })
 
@@ -112,6 +121,21 @@ app.get("/api/categories", (req, res) => {
     })
 })
 
+
+
+
+app.get("/", (req, res) => {
+    res.render("index");
+})
+
+app.get("/:file", (req, res) => {
+    try{
+        res.render(req.params.file);
+    }
+    catch(err){
+        res.status(404).send("ERROR: not found!");
+    }
+})
 
 async function loginAccount(username, password){
     if(await doesUsernameExist(username)){
