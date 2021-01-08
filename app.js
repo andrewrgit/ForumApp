@@ -4,8 +4,7 @@ const { Client } = require("pg");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const { json } = require("express");
-const { get } = require("http");
+const responseTime = require("response-time");
 
 const app = express();
 
@@ -28,6 +27,7 @@ app.set("view engine", "ejs");
 
 
 
+app.use(responseTime());
 
 app.use(express.static(path.resolve(__dirname, "public")));
 app.use(express.urlencoded( { extended: true }));
@@ -62,11 +62,11 @@ app.post("/api/login", (req, res) => {
         .then(apiResponse => {
             if(apiResponse.success){               
                 const token = jwt.sign({ username }, privateKey, {
-                    expiresIn: 60
+                    expiresIn: "1hr"
                 });
                 console.log("jwt token: " + token);
                 res.cookie("token", token, {
-                    maxAge: 60 * 1000,
+                    maxAge: 3600 * 1000,
                     httpOnly: true
                 })
                 .json({
@@ -136,6 +136,9 @@ app.post("/api/logout", (req, res) => {
 })
 
 
+app.get("/posts/:category", (req, res) => {
+    
+})
 
 app.get("/", (req, res) => {
     res.render("index");
@@ -148,6 +151,10 @@ app.get("/:file", (req, res) => {
     catch(err){
         res.status(404).send("ERROR: not found!");
     }
+})
+
+app.get("*", (req, res) => {
+    res.status(404).send();
 })
 
 async function loginAccount(username, password){
@@ -249,7 +256,7 @@ async function getCategories(){
         ssl: false
     });
 
-    let queryString = "SELECT name FROM categories;";
+    let queryString = "SELECT name, description FROM categories;";
     try{
         await client.connect();
         let result = await client.query(queryString);
@@ -257,7 +264,8 @@ async function getCategories(){
         let categories = [];
         result.rows.forEach( cat => {
             categories.push({
-                name: cat["name"]
+                name: cat["name"],
+                description: cat["description"]
             })
         })
 

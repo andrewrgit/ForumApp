@@ -17,23 +17,17 @@ async function getCategories(){
 
 getCategories()
 .then(json => {
-    let element = document.getElementById("categories");
+    let categories = document.getElementById("categories");
     json.forEach(category => {
-        let childCategory = document.createElement("div");
-        childCategory.setAttribute("class", "category");
+        let template = document.getElementsByTagName("template")[0];
+        let clone = document.importNode(template.content, true);
 
-        let childCatTitle = document.createElement("a")
-        childCatTitle.innerText = category["name"];
-
-        let childCatTitleWrapper = document.createElement("h1");
-        childCatTitleWrapper.appendChild(childCatTitle);
-
-        let childCatDescription = document.createElement("h5");
-        
-        childCategory.appendChild(childCatTitleWrapper);
-        childCategory.appendChild(childCatDescription);
-
-        element.appendChild(childCategory);
+        let title = clone.getElementById("categoryTitle");
+        title.innerText = category.name;
+        title.setAttribute("href", `/category/${category.name}`);
+        let description = clone.getElementById("categoryDescription");
+        description.innerText = category.description;
+        categories.appendChild(clone);
         
     })
 }, reject => {
