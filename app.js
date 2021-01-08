@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const { json } = require("express");
+const { get } = require("http");
 
 const app = express();
 
@@ -23,7 +24,6 @@ const connString = process.env.DATABASE_URL || "postgres://postgres:password@loc
 const privateKey = process.env.PRIVATE_KEY || "testprivatekey";
 
 app.set("views", path.resolve(__dirname, "public"));
-console.log(path.resolve(__dirname, "public/views"));
 app.set("view engine", "ejs");
 
 
@@ -46,12 +46,6 @@ app.use((req, res, next) => {
     next();
 })
 
-function checkTokens(req, res, next){
-    console.log(req.cookies)
-    console.log("lol");
-    next();
-}
-
 
 app.listen(port, () => {
     console.log(`Listening on http://localhost:${port}`);
@@ -68,11 +62,11 @@ app.post("/api/login", (req, res) => {
         .then(apiResponse => {
             if(apiResponse.success){               
                 const token = jwt.sign({ username }, privateKey, {
-                    expiresIn: 30
+                    expiresIn: 60
                 });
                 console.log("jwt token: " + token);
                 res.cookie("token", token, {
-                    maxAge: 30 * 1000,
+                    maxAge: 60 * 1000,
                     httpOnly: true
                 })
                 .json({
@@ -99,7 +93,6 @@ app.post("/api/createaccount", (req, res) => {
         createAccount(req.body.username, req.body.password)
         .then(apiResponse => {
             if(apiResponse.success){
-                console.log("sending OK status");
                 res.status(200).json(apiResponse);
             }
             else{
@@ -133,6 +126,14 @@ app.get("/api/categories", (req, res) => {
     })
 })
 
+app.post("/api/logout", (req, res) => {
+    if(res.locals.username){
+        res.clearCookie("token").status(200).json(new APIResponse(true));
+    }
+    else{
+        res.status(400).json(new APIResponse(false, "Token not valid, can't logout"));
+    }
+})
 
 
 

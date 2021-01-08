@@ -20,7 +20,8 @@
         <div class="navbar-end">
             <div class="navbar-item">
                 <% if(locals.username) { %>
-                    <p class="has-text-white">Logged in as: <%= username %></p>
+                    <p class="navbar-item has-text-white">Logged in as: <%= username %></p>
+                    <a class="navbar-item button" id="logoutBtn" onclick="logout();">Log Out</a>       
                 <% } else { %>
                 <div class="buttons">
                     <a class="button" href="createaccount">
