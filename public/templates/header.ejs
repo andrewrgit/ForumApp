@@ -19,6 +19,9 @@
 
         <div class="navbar-end">
             <div class="navbar-item">
+                <% if(locals.username) { %>
+                    <p class="has-text-white">Logged in as: <%= username %></p>
+                <% } else { %>
                 <div class="buttons">
                     <a class="button" href="createaccount">
                         Create Account
@@ -27,6 +30,7 @@
                         Log In
                     </a>
                 </div>
+                <% } %>
                 
             </div>
         </div>

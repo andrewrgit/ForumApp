@@ -4,6 +4,7 @@ const { Client } = require("pg");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const { json } = require("express");
 
 const app = express();
 
@@ -32,7 +33,18 @@ app.use(express.static(path.resolve(__dirname, "public")));
 app.use(express.urlencoded( { extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-
+app.use((req, res, next) => {
+    if(req.cookies['token']){
+        try{
+            let tokenObj = jwt.verify(req.cookies['token'], privateKey);
+            res.locals.username = tokenObj.username;
+        }
+        catch(err){
+            console.log("error in checking user token every request " + err);
+        }
+    }
+    next();
+})
 
 function checkTokens(req, res, next){
     console.log(req.cookies)
@@ -63,13 +75,13 @@ app.post("/api/login", (req, res) => {
                     maxAge: 30 * 1000,
                     httpOnly: true
                 })
-                .send({
+                .json({
                     success: apiResponse.success,
                     username: username
                 })
             }
             else{
-                res.status(401).send(apiResponse.message);
+                res.status(401).json(apiResponse.message);
             }
         })
         .catch(err =>{
@@ -78,7 +90,7 @@ app.post("/api/login", (req, res) => {
         })
     }
     else{
-        res.status(401).send("invalid login");
+        res.status(401).json(new APIResponse(false, "Invalid login"));
     }
 })
 
@@ -88,10 +100,10 @@ app.post("/api/createaccount", (req, res) => {
         .then(apiResponse => {
             if(apiResponse.success){
                 console.log("sending OK status");
-                res.status(200).send(apiResponse);
+                res.status(200).json(apiResponse);
             }
             else{
-                res.status(400).send(apiResponse)
+                res.status(400).json(apiResponse)
             }
         })
         .catch(err => {
