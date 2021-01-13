@@ -1,5 +1,6 @@
 var loginBtn = document.getElementById("loginBtn");
 var isLoggingIn = false;
+var text = document.getElementById("responseText");
 function login(){
     if(isLoggingIn) return;
     isLoggingIn = true;
@@ -25,7 +26,6 @@ function login(){
     .then(json => {
         isLoggingIn = false;
         loginBtn.classList.remove("is-loading");
-        console.log(json);
         if(json.success){
             document.location.href = "/";
         }

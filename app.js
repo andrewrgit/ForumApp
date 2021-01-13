@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const responseTime = require("response-time");
+const { createCipher } = require("crypto");
 
 const app = express();
 
@@ -75,7 +76,7 @@ app.post("/api/login", (req, res) => {
                 })
             }
             else{
-                res.status(401).json(apiResponse.message);
+                res.status(401).send(apiResponse);
             }
         })
         .catch(err =>{
@@ -136,8 +137,15 @@ app.post("/api/logout", (req, res) => {
 })
 
 
-app.get("/posts/:category", (req, res) => {
-    
+app.get("/api/posts/:category", (req, res) => {
+        getPosts(req.params.category)
+        .then( posts => {
+            res.status(200).send(posts)
+        })
+        .catch( err =>{
+            console.log(err);
+            res.status(400).send(new APIResponse(false, "An error occured trying to retrieve posts"));
+        })
 })
 
 app.get("/", (req, res) => {
@@ -176,6 +184,9 @@ async function loginAccount(username, password){
             if(isPasswordMatching){
                 return new APIResponse(true);
             }
+            else{
+                return new APIResponse(false, "Either the username or password is incorrect")
+            }
         }
         catch(err) {
             console.log(err);
@@ -183,7 +194,7 @@ async function loginAccount(username, password){
         }
     }
     else{
-        return new APIResponse(false, "Username does not exist");
+        return new APIResponse(false, "Either the username or password is incorrect");
     }
 }
 
@@ -271,6 +282,36 @@ async function getCategories(){
 
         client.end();
         return categories;
+    }
+    catch(err){
+        console.log(err);
+        throw err;
+    }
+
+}
+
+async function getPosts(categoryName){
+    let client = new Client({
+        connectionString: connString,
+        ssl: false
+    });
+
+    let queryString = "SELECT accounts_username, post_content FROM posts WHERE categories_name = $1;";
+    let values = [categoryName];
+    try{
+        await client.connect();
+        let result = await client.query(queryString, values);
+
+        let posts = [];
+        result.rows.forEach( post => {
+            posts.push({
+                accountsUsername: post["accounts_username"],
+                postContent: post["post_content"]
+            })
+        })
+
+        client.end();
+        return posts;
     }
     catch(err){
         console.log(err);
