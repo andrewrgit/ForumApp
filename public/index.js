@@ -15,10 +15,10 @@ async function getCategories(){
 
 }
 
-async function getPosts(categoryName){
+async function getTopics(categoryName){
 
     try{
-        let data = await fetch(`/api/posts/${categoryName}`)
+        let data = await fetch(`/api/topics/${categoryName}`)
         if(data.status != 200){
             return Promise.reject();
         }
@@ -32,9 +32,26 @@ async function getPosts(categoryName){
 
 }
 
-async function displayPosts(categoryName){
+async function getPosts(topicName){
+
     try{
-        const postsJson = await getPosts(categoryName);
+        let data = await fetch(`/api/posts/${topicName}`)
+        if(data.status != 200){
+            return Promise.reject();
+        }
+        let json = await data.json();
+        return json;
+    }
+    catch(err){
+        console.log(err);
+        throw err;
+    }
+
+}
+
+async function displayPosts(topicName){
+    try{
+        const postsJson = await getPosts(topicName);
 
         let posts = document.getElementById("content");
         posts.innerHTML = "";
@@ -47,9 +64,36 @@ async function displayPosts(categoryName){
             let username = clone.getElementById("username");
             username.innerText = post.accountsUsername
 
-            let postContent = clone.getElementById("postContent");
-            postContent.innerText = post.postContent
+            let postContent = clone.getElementById("topicTitle");
+            postContent.innerText = post.title
             posts.appendChild(clone);
+            
+        })
+    }
+    catch(err){
+        console.log(err);
+        throw err;
+    }
+}
+
+async function displayTopics(categoryName){
+    try{
+        const postsJson = await getTopics(categoryName);
+
+        let topics = document.getElementById("content");
+        topics.innerHTML = "";
+
+        postsJson.forEach(topic => {
+            console.log(topic);
+            let template = document.getElementsByTagName("template")[1];
+            let clone = document.importNode(template.content, true);
+    
+            let username = clone.getElementById("username");
+            username.innerText = topic.accountsUsername
+
+            let postContent = clone.getElementById("topicTitle");
+            postContent.innerText = topic.title
+            topics.appendChild(clone);
             
         })
     }
@@ -69,7 +113,7 @@ getCategories()
 
         let title = clone.getElementById("categoryTitle");
         title.innerText = category.name;
-        title.setAttribute("onClick", `displayPosts("${category.name}")`);
+        title.setAttribute("onClick", `displayTopics("${category.name}")`);
         let description = clone.getElementById("categoryDescription");
         description.innerText = category.description;
         categories.appendChild(clone);
