@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Forum App</title>
+        <!-- <link rel="stylesheet" href="stylesheet.css"> -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    </head>
+    <body>
+        <header>
+            <%- include("templates/header.ejs") %>
+        </header>
+        <main>
+            <section class="section p-1">
+                <div class="container is-max-desktop">
+                    <h2 class="has-text-centered is-size-3">Forum Categories</h2>
+                    <div class="has-text-centered" id="content">
+    
+                    </div>
+    
+                    </div>           
+                </div>
+            </section>
+            <div>
+
+            </div>
+        </main>
+
+        <template id="categoryTemplate">
+            <div class="box">
+                <h1 class="is-size-4 m-0 has-text-weight-bold"><a id="categoryTitle"></a></h1>
+                <hr style="margin: .5em">
+                <p id="categoryDescription"></p>
+            </div>
+        </template>
+
+        <template id="postTemplate">
+            <div class="media-content">
+                <h1 class="is-size-4 m-0 has-text-weight-bold"><a id="username"></a></h1>
+                <hr style="margin: .5em" width="1" size="500">
+                <p id="postContent"></p>
+            </div>
+        </template>
+
+        <script src="index.js" async defer></script>
+    </body>
+</html>

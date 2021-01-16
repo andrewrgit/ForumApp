@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login Page</title>
+    <!--<link rel="stylesheet" href="stylesheet.css">-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+</head>
+<body>
+    <header>
+        <%- include("templates/header.ejs") %>
+    </header>
+    <main>
+        <section class="section">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered">
+                    <div class="column is-half">    
+                        <h3 class="is-size-4">Log In</h3>
+                        <br>
+                        <span>Username</span>
+                        <br>
+                        <input class="input" type="text" id="user">
+                        <br>
+                        <br>
+                        <span>Password </span>
+                        <br>
+                        <input class="input" type="password" id="pass">
+                        <br>
+                        <br>
+                        <button class="button is-info" type="submit" id="loginBtn" onclick="login()">Log In</button>
+                        <div class="has-text-centered m-4">
+                            <p id="responseText" class="is-size-4"></p>
+                        </div>
+                    </div>
+
+                </div>           
+            </div>
+        </section>
+        <div class="login">
+
+        </div>
+    </main>
+    <script src="login.js"></script>
+</body>
+</html>

@@ -15,7 +15,7 @@ header{
     padding: 1%;
 }
 
-.catagory h5{
+.category h5{
     border-top: solid black 2px;
 }
 
@@ -23,12 +23,13 @@ header{
     text-align: center;
 }
 
-.catagory{
+.category{
     border: 2px black solid;
     border-radius: 5px;
     margin-bottom: 3%;
+    box-shadow: black 5px 5px 10px;
 }
-.catagory * {
+.category * {
     padding: 10px;
 }
 
@@ -53,4 +54,13 @@ header input[type=text]:focus {
 a{
     color: black;
     text-decoration: none;
+}
+
+.login{
+    margin: auto;
+    width: 50%;
+}
+
+.accountButtons {
+    float: right;
 }

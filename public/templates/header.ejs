@@ -1,0 +1,46 @@
+<nav class="navbar is-dark">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="index">ForumApp</a>
+
+        <a class="navbar-burger" id="burger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </a>
+    </div>
+
+    <div class="navbar-menu" id="navbarMenu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="/index">
+                Categories
+            </a>
+        </div>
+
+
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <% if(locals.username) { %>
+                    <p class="navbar-item has-text-white">Logged in as: <%= username %></p>
+                    <a class="navbar-item button" id="logoutBtn" onclick="logout();">Log Out</a>       
+                <% } else { %>
+                <div class="buttons">
+                    <a class="button" href="createaccount">
+                        Create Account
+                    </a>
+                    <a class="button" href="login">
+                        Log In
+                    </a>
+                </div>
+                <% } %>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="navbar-end">
+
+    </div>
+
+</nav>
+
+<script src="templates/header.js"></script>
