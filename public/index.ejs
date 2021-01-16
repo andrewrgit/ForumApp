@@ -3,7 +3,7 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Forum App</title>
-        <!-- <link rel="stylesheet" href="stylesheet.css"> -->
+        <link rel="stylesheet" href="stylesheet.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
     </head>
     <body>
@@ -34,11 +34,14 @@
             </div>
         </template>
 
-        <template id="postTemplate">
-            <div class="media-content">
-                <h1 class="is-size-4 m-0 has-text-weight-bold"><a id="username"></a></h1>
-                <hr style="margin: .5em" width="1" size="500">
-                <p id="postContent"></p>
+        <template id="topicTemplate">
+            <div class="box m-1 p-1">
+                <h1 class="is-size-4 m-0 has-text-weight-bold ">
+                    <a id="topicTitle">
+
+                    </a>
+                </h1>
+                <p id="username"></p>
             </div>
         </template>
 

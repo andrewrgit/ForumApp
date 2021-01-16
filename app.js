@@ -137,15 +137,26 @@ app.post("/api/logout", (req, res) => {
 })
 
 
-app.get("/api/posts/:category", (req, res) => {
-        getPosts(req.params.category)
+app.get("/api/topics/:category", (req, res) => {
+        getTopics(req.params.category)
         .then( posts => {
             res.status(200).send(posts)
         })
         .catch( err =>{
             console.log(err);
-            res.status(400).send(new APIResponse(false, "An error occured trying to retrieve posts"));
+            res.status(400).send(new APIResponse(false, "An error occured trying to retrieve topics"));
         })
+})
+
+app.get("/api/posts/:topic", (req, res) => {
+    getTopics(req.params.category)
+    .then( posts => {
+        res.status(200).send(posts)
+    })
+    .catch( err =>{
+        console.log(err);
+        res.status(400).send(new APIResponse(false, "An error occured trying to retrieve topics"));
+    })
 })
 
 app.get("/", (req, res) => {
@@ -290,13 +301,13 @@ async function getCategories(){
 
 }
 
-async function getPosts(categoryName){
+async function getTopics(categoryName){
     let client = new Client({
         connectionString: connString,
         ssl: false
     });
 
-    let queryString = "SELECT accounts_username, post_content FROM posts WHERE categories_name = $1;";
+    let queryString = "SELECT accounts_username, title FROM topics WHERE categories_name = $1;";
     let values = [categoryName];
     try{
         await client.connect();
@@ -306,7 +317,7 @@ async function getPosts(categoryName){
         result.rows.forEach( post => {
             posts.push({
                 accountsUsername: post["accounts_username"],
-                postContent: post["post_content"]
+                title: post["title"]
             })
         })
 
