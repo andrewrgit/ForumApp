@@ -36,12 +36,30 @@
 
         <template id="topicTemplate">
             <div class="box m-1 p-1">
-                <h1 class="is-size-4 m-0 has-text-weight-bold ">
+                <h1 class="is-size-4 m-0 has-text-weight-bold">
                     <a id="topicTitle">
 
                     </a>
                 </h1>
                 <p id="username"></p>
+            </div>
+        </template>
+
+        <template id="postTemplate">
+            <div class="box m-1 p-1">
+                <h1 class="is-size-4 m-0 has-text-weight-bold">
+                    <p id="postUsername" style="float: left; width: 20%;">
+
+                    </p>
+                </h1>
+                <p id="postContent" style="align-content: center;" class="has-text-centered"></p>
+            </div>
+        </template>
+
+        <template id="createPostTemplate">
+            <div class="box m-1 p-1">
+                <textarea class="textarea" placeholder="Type your post here" id="postTextarea"></textarea>
+                <a class="button" id="createpostButton">Post</a>
             </div>
         </template>
 

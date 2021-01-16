@@ -148,8 +148,8 @@ app.get("/api/topics/:category", (req, res) => {
         })
 })
 
-app.get("/api/posts/:topic", (req, res) => {
-    getTopics(req.params.category)
+app.get("/api/posts/:topicId", (req, res) => {
+    getPosts(req.params.topicId)
     .then( posts => {
         res.status(200).send(posts)
     })
@@ -157,6 +157,21 @@ app.get("/api/posts/:topic", (req, res) => {
         console.log(err);
         res.status(400).send(new APIResponse(false, "An error occured trying to retrieve topics"));
     })
+})
+
+app.post("/api/createpost/:topicId", (req, res) => {
+    if(!res.locals.username){
+        res.status(403).send(new APIResponse(false, "You must be logged in to create posts"));
+    }
+    else if(req.body["post_content"] && req.body["topicId"]){
+            createPost(res.locals.username, req.body["post_content"], req.body["topicId"])
+            .then( apiResponse => {
+                res.status(200).send(apiResponse);
+            })
+    }
+    else{
+        res.status(400).send(new APIResponse(false, "Bad Request"));
+    }
 })
 
 app.get("/", (req, res) => {
@@ -175,6 +190,32 @@ app.get("/:file", (req, res) => {
 app.get("*", (req, res) => {
     res.status(404).send();
 })
+
+
+async function createPost(username, postContent, topicId){
+    let client = new Client({
+        connectionString: connString,
+        ssl: false
+    });
+
+    let QueryString = "INSERT INTO posts(accounts_username, post_date, post_content, topic_id) VALUES ($1, CURRENT_TIMESTAMP, $2, $3)";
+    let values = [username, postContent, topicId]
+
+    
+    const apiResponse = await client.connect()
+    .then(() => {
+        return client.query(QueryString, values);
+    })
+    .then(res => {
+        return new APIResponse(true);
+    })
+    .catch(err => {
+        console.log(err);
+        throw err;
+    })
+    client.end();
+    return apiResponse;
+}
 
 async function loginAccount(username, password){
     if(await doesUsernameExist(username)){
@@ -307,8 +348,39 @@ async function getTopics(categoryName){
         ssl: false
     });
 
-    let queryString = "SELECT accounts_username, title FROM topics WHERE categories_name = $1;";
+    let queryString = "SELECT accounts_username, title, id FROM topics WHERE categories_name = $1;";
     let values = [categoryName];
+    try{
+        await client.connect();
+        let result = await client.query(queryString, values);
+
+        let topics = [];
+        result.rows.forEach( topic => {
+            topics.push({
+                accountsUsername: topic["accounts_username"],
+                title: topic["title"],
+                topicId: topic["id"]
+            })
+        })
+
+        client.end();
+        return topics;
+    }
+    catch(err){
+        console.log(err);
+        throw err;
+    }
+
+}
+
+async function getPosts(topicId){
+    let client = new Client({
+        connectionString: connString,
+        ssl: false
+    });
+
+    let queryString = "SELECT accounts_username, post_content FROM posts WHERE topic_id = $1 ORDER BY post_date ASC;";
+    let values = [topicId];
     try{
         await client.connect();
         let result = await client.query(queryString, values);
@@ -317,7 +389,7 @@ async function getTopics(categoryName){
         result.rows.forEach( post => {
             posts.push({
                 accountsUsername: post["accounts_username"],
-                title: post["title"]
+                postContent: post["post_content"]
             })
         })
 
