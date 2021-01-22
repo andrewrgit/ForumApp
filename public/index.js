@@ -55,8 +55,11 @@ async function displayPosts(topicId, topicTitle){
         let posts = document.getElementById("content");
         posts.innerHTML = "";
 
-        let mainTitle = document.getElementById("mainTitle");
-        mainTitle.innerText = `${topicTitle}`
+        if(topicTitle){
+            let mainTitle = document.getElementById("mainTitle");
+            mainTitle.innerText = `${topicTitle}`
+        }
+
 
         postsJson.forEach(post => {
             console.log(post);
@@ -164,6 +167,7 @@ async function createPost(topicId){
             return Promise.reject();
         }   
         let json = await data.json();
+        displayPosts(topicId);
         return json;
     }
     catch(err){
