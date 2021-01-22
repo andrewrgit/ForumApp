@@ -13,7 +13,7 @@
         <main>
             <section class="section p-1">
                 <div class="container is-max-desktop">
-                    <h2 class="has-text-centered is-size-3">Forum Categories</h2>
+                    <h2 class="has-text-centered is-size-3" id="mainTitle">Forum Categories</h2>
                     <div class="has-text-centered" id="content">
     
                     </div>
@@ -60,6 +60,13 @@
             <div class="box m-1 p-1">
                 <textarea class="textarea" placeholder="Type your post here" id="postTextarea"></textarea>
                 <a class="button" id="createpostButton">Post</a>
+            </div>
+        </template>
+
+        <template id="createTopicTemplate">
+            <div class="box m-1 p-1">
+                <textarea class="textarea" placeholder="Type your topic title here" id="topicTextarea"></textarea>
+                <a class="button" id="createTopicButton">Post</a>
             </div>
         </template>
 

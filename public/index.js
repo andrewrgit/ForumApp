@@ -48,12 +48,15 @@ async function getPosts(topicId){
     }
 }
 
-async function displayPosts(topicId){
+async function displayPosts(topicId, topicTitle){
     try{
         const postsJson = await getPosts(topicId);
 
         let posts = document.getElementById("content");
         posts.innerHTML = "";
+
+        let mainTitle = document.getElementById("mainTitle");
+        mainTitle.innerText = `${topicTitle}`
 
         postsJson.forEach(post => {
             console.log(post);
@@ -88,6 +91,9 @@ async function displayTopics(categoryName){
         let topics = document.getElementById("content");
         topics.innerHTML = "";
 
+        let mainTitle = document.getElementById("mainTitle");
+        mainTitle.innerText = `${categoryName} Topics`
+
         postsJson.forEach(topic => {
             console.log(topic);
             let template = document.getElementsByTagName("template")[1];
@@ -98,15 +104,47 @@ async function displayTopics(categoryName){
 
             let topicTitle = clone.getElementById("topicTitle");
             topicTitle.innerText = topic.title
-            topicTitle.setAttribute("onClick", `displayPosts(${topic.topicId})`)
+            topicTitle.setAttribute("onClick", `displayPosts(${topic.topicId}, "${topic.title}")`)
             topics.appendChild(clone);
-            
+        
         })
+
+        let createTopicTemplate = document.getElementsByTagName("template")[4];
+        let clone = document.importNode(createTopicTemplate.content, true);
+        clone.getElementById("createTopicButton").setAttribute("onClick", `createTopic("${categoryName}")`);
+
+        topics.appendChild(clone);
     }
     catch(err){
         console.log(err);
         throw err;
     }
+}
+
+async function createTopic(categoryName){
+    let textArea = document.getElementById("topicTextarea");
+    try{
+        let data = await fetch(`/api/createtopic/${categoryName}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "title": textArea.value
+            })
+        });
+        if(data.status != 200){
+            return Promise.reject();
+        }   
+        let json = await data.json();
+        displayTopics(categoryName);
+        return json;
+    }
+    catch(err){
+        console.log(err);
+        throw err;
+    }
+    
 }
 
 async function createPost(topicId){

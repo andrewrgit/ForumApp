@@ -159,6 +159,21 @@ app.get("/api/posts/:topicId", (req, res) => {
     })
 })
 
+app.post("/api/createtopic/:categoryName", (req, res) => {
+    if(!res.locals.username){
+        res.status(403).send(new APIResponse(false, "You must be logged in to create topics"));
+    }
+    else if(req.body["title"]){
+            createTopic(res.locals.username, req.body["title"], req.params.categoryName)
+            .then( apiResponse => {
+                res.status(200).send(apiResponse);
+            })
+    }
+    else{
+        res.status(400).send(new APIResponse(false, "Bad Request"));
+    }
+})
+
 app.post("/api/createpost/:topicId", (req, res) => {
     if(!res.locals.username){
         res.status(403).send(new APIResponse(false, "You must be logged in to create posts"));
@@ -200,6 +215,31 @@ async function createPost(username, postContent, topicId){
 
     let QueryString = "INSERT INTO posts(accounts_username, post_date, post_content, topic_id) VALUES ($1, CURRENT_TIMESTAMP, $2, $3)";
     let values = [username, postContent, topicId]
+
+    
+    const apiResponse = await client.connect()
+    .then(() => {
+        return client.query(QueryString, values);
+    })
+    .then(res => {
+        return new APIResponse(true);
+    })
+    .catch(err => {
+        console.log(err);
+        throw err;
+    })
+    client.end();
+    return apiResponse;
+}
+
+async function createTopic(username, topicName, categoryname){
+    let client = new Client({
+        connectionString: connString,
+        ssl: false
+    });
+
+    let QueryString = "INSERT INTO topics(accounts_username, title, categories_name) VALUES ($1, $2, $3)";
+    let values = [username, topicName, categoryname]
 
     
     const apiResponse = await client.connect()
@@ -348,7 +388,7 @@ async function getTopics(categoryName){
         ssl: false
     });
 
-    let queryString = "SELECT accounts_username, title, id FROM topics WHERE categories_name = $1;";
+    let queryString = "SELECT accounts_username, title, id FROM topics WHERE categories_name = $1 ORDER BY id DESC;";
     let values = [categoryName];
     try{
         await client.connect();
